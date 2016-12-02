@@ -11,7 +11,9 @@
 	<script src="libs/js/extensions/export/bootstrap-table-export.js"></script>
 	<link rel='stylesheet' href='style.css' type='text/css' media='all' />
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
-	
+	<script>
+       var SmrtLinkapiServer = 'http://<host>:<port>';
+	</script>
 </head>
 <body>
 
@@ -52,11 +54,12 @@
 
 
 <script>
-var $table = $('#table');	
+var $table = $('#table');
+var subreadsApi = SmrtLinkapiServer + '/secondary-analysis/datasets/subreads';
 
 $(document).ready(function() {
 	$('#table').bootstrapTable({
-		url: './data/data.json',
+		url: subreadsApi,
 		 rowStyle: function (row, index) {
                 //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
                 var strclass = "";
