@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>TBC Sequel 统计</title>
+	<link href="libs/css/bootstrap.min.css" rel="stylesheet">
+	<link href="libs/css/bootstrap-table.min.css" rel="stylesheet" >
+	
+	<script type="text/javascript" src="libs/js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="libs/js/bootstrap.min.js"></script>	
+	<script type="text/javascript" src="libs/js/bootstrap-table.min.js"></script>
+	<script src="libs/js/extensions/export/bootstrap-table-export.js"></script>
+	<link rel='stylesheet' href='style.css' type='text/css' media='all' />
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+	
+</head>
+<body>
+
+<div>
+	<div class="page-header">
+		<h1><i class="glyphicon glyphicon-stats">　Sequel数据信息表</i></h1>
+	</div>
+	<div class ="col-md-12 col-xs-12 page">
+		<div id="toolbar" class="toolbar">
+         	<div class="info">
+				<strong class="alert alert-success"> 数据量 &gt;4G</strong>
+				<strong class="alert alert-warning"> 2G &lt; 数据量 &le;4G</strong>
+				<strong class="alert alert-danger"> 数据量 &le;2G</strong>
+			</div>
+		</div>
+			<table id="table" class="table"
+			       data-toolbar="#toolbar"
+				   data-search="true"
+				   data-show-refresh="true"
+				   data-show-toggle="false"
+				   data-show-columns="true"
+				   data-detail-view="true"
+				   data-show-pagination-switch="true"
+				   data-pagination="true"
+				   data-id-field="id"
+				   data-page-list="[10, 25, 50, 100, ALL]"
+  				   data-sort-name="id"
+				   data-sort-order="desc"
+				   data-show-footer="true">
+			</table>
+	</div>
+	<div class="clearfix"></div>
+	<div class="footer">
+			Copyright &copy; Wenchao Lin
+	</div>
+</div>
+
+
+
+<script>
+var $table = $('#table');	
+
+$(document).ready(function() {
+	$('#table').bootstrapTable({
+		url: './data/data.json',
+		 rowStyle: function (row, index) {
+                //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
+                var strclass = "";
+                if (row.totalLength > 4000000000) {
+                    strclass = 'success';//还有一个active
+                }
+                else if (row.totalLength > 2000000000 && row.totalLength <= 4000000000 ) {
+                    strclass = 'warning';
+                }
+                else if (row.totalLength <= 2000000000) {
+					strclass = 'danger';
+				}
+                else {
+                    return {};
+                }
+                return { classes: strclass }
+            },
+        detailFormatter: detailFormatter,
+        showExport:"true",
+        exportTypes:"['json','xml','csv','txt','excel']",
+		columns: [{
+			field: 'id',
+			title: 'ID',
+			align: 'center',
+			width: '80px',
+			sortable: true,
+		},{
+			field: 'name',
+			title: 'Run Name',
+			width: '200px',
+			sortable: true,
+		},{
+			field: 'wellName',
+			title: 'Well',
+			align: 'center',
+			width: '60px',
+			sortable: true,
+		},{
+			field: 'wellSampleName',
+			title: 'Sample Name',
+			sortable: true,
+			align:"left",
+		},{
+			field: 'totalLength',
+			title: 'Total Length',
+			sortable: true,
+			footerFormatter: sumFormatter,
+			formatter: dataFormatter
+			
+		},{
+			field: 'numRecords',
+			title: 'numRecords',
+			sortable: true,
+			footerFormatter: sumFormatter2,
+
+		}, {
+			field: 'createdAt',
+			title: 'createdAt',
+			sortable: true,
+			formatter: dateFormatter
+		}]
+	});
+	
+	
+	function sumFormatter(data) {
+			var field = this.field;
+			var total_sum = data.reduce(function(sum, row) {
+				return (sum) + (parseInt(row[field]) || 0);
+			}, 0);
+			total = "<strong>总数据量："+(total_sum / 1000000000).toFixed(2) + "<span class=\"badge danwei\">GB</span></strong>";
+			return total;
+		}
+		
+	function sumFormatter2(data) {
+		var field = this.field;
+		var total_sum = data.reduce(function(sum, row) {
+			return (sum) + (parseInt(row[field]) || 0);
+		}, 0);
+		total = "<strong>"+ total_sum + "</strong>";		
+		return total;
+	}
+	
+	 function dataFormatter(value) {
+        var size = 0;
+        size = (value / 1000000).toFixed(2);     
+        return  size + "<span class=\"badge danwei\">MB</span></strong>";
+    }
+    
+    function dateFormatter(value) {
+        var size = 0;
+        date = value.substring(0,10)
+        return date;
+    }
+    
+    function statusFormatter(value) {
+        var statusUrl = 'http://tbc195:9091/secondary-analysis/job-manager/jobs/pbsmrtpipe/'+value;
+        return statusUrl;
+    }
+    
+	function detailFormatter(index, row) {
+        var html = [];
+        $.each(row, function (key, value) {
+            html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+        });
+        return html.join('');
+    }
+	
+});
+
+
+//$table.on('expand-row.bs.table', function (e, index, row, $detail) {
+//	if (index % 2 == 1) {
+//		$detail.html('Loading from ajax request...');
+//		$.get('data/log', function (res) {
+//			$detail.html(res);
+//		});
+//	}
+//});
+
+ </script>
+</body>
+</html>

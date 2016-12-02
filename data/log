@@ -1,0 +1,11 @@
+--2016-12-02 15:40:01--  http://tbc195:9091/secondary-analysis/datasets/subreads
+Resolving tbc195 (tbc195)... 173.20.251.255
+Connecting to tbc195 (tbc195)|173.20.251.255|:9091... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 30604 (30K) [application/json]
+Saving to: ‘subreads’
+
+     0K .......... .......... .........                       100%  121K=0.2s
+
+2016-12-02 15:40:01 (121 KB/s) - ‘subreads’ saved [30604/30604]
+
